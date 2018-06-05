@@ -270,6 +270,17 @@ pgeom(6, prob=0.1, lower.tail = TRUE)
 #'     
 #'     + Você observou que, das últimas 500 _tentativas_ de publicação de reclamações, 340 acertaram a validação de CAPTCHA. Qual a probabilidade de uma quantidade entre 320 e 350 tentativas passarem pela validação de CAPTCHA a cada 500 tentativas? Dada a probabilidade de 70% de sucesso, qual o número esperado de publicações a cada 500 CAPTCHAS? DICA: ESTAMOS TRATANDO DA DISTRIBUIÇÃO BINOMIAL.
 #' 
+set.seed(30290)
+# Gera uma sequência de 500 eventos de ligações
+sample_calls_tails <- rbernoulli(500)
+
+# Conta a quantidade de ligações com sucesso
+seq_calls_tails <- rle(sample_calls_tails)
+
+# Quais as sequências de ligações
+seq_calls_tails$lengths[!seq_calls_tails$values]
+
+
 #' >> FIM ATIVIDADE
 #' 
 #' ### Variáveis aleatórias contínuas

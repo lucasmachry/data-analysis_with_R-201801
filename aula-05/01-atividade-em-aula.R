@@ -1,16 +1,16 @@
 # Carregue a biblioteca tidyverse. Lembre que outras bibliotecas serão carregadas junto ao tidyverse
-
+library(tidyverse)
 
 
 
 # Crie um dataframe com o conteúdo do arquivo ted_main.csv.gz. 
 
-
+df_ted <- read_csv("aula-05/data/ted_main.csv.gz")
 
 
 # Visualize o resumo dos dados do dataframe. Verifique os mínimos, máximos, médias e medianas das variáveis numéricas.
 # As variáveis duration, film_date e published_date estão no tipo de dados apropriado?
-
+summary(df_ted) # sumário do data frame
 
 
 
@@ -19,39 +19,43 @@
 #     * film_date, para data, com a função as_datetime.
 #     * published_date, para data, com a função as_datetime..
 
+library(lubridate)
 
+df_ted %>% mutate (duration = as.duration(duration),
+          film_date = as_datetime(film_date)                 
+) -> df_final_ted
 
 
 # Converta as seguintes variáveis character para variáveis categóricas com a função factor.
 #     * event
 #     * speaker_occupation
 
-
+ df_ted %>% mutate(event = factor(event),
+                   speaker_occupation = factor(speaker_occupation)) -> df_final_ted
 
 
 # Retire do dataframe a variável name
 
-
-
+ df_ted %>% select(name)
 
 # Visualize novamente o resumo dos dados do dataframe. Verifique os mínimos, máximos, médias e medianas das variáveis numéricas. Verifique as contagens das variáveis categóricas
-
-
-
+summary(df_ted)
+summary(df_final_ted)
 
 # Verifique quais registros possuem a menor quantidade de línguas. Corrija para que possuam no mínimo 1 idioma.
 
-
+df_ted %>%  mutate(
+  languages = if_else(df_ted$languages == 0 , 1L , languages)) -> df_final_ted
 
 
 # Verifique os 15 registros com menor data de filmagem. 
-
-
-
+df_final_ted %>% arrange(film_date) %>% head(15)
 
 # Crie um dataframe com a contagem de apresentações por ano de filmagem e visualize todo o seu conteúdo
 
+df_final_ted %>% group_by(year(film_date)) %>% summarise(qtde = n()) -> df_count_year
 
+df_count_year
 
 # Analise os 10 quantis da quantidade de apresentações por ano.
 # Descarte, do data frame de apresentações do TED Talks, aqueles cujo ano de filmagem tiver quantidade de apresentações menor ou igual à quantidade do quarto quantil.

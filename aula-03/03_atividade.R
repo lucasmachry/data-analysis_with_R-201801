@@ -14,7 +14,7 @@ salarios <- read_csv("aula-03/data/201802_dados_salarios_servidores.csv.gz")
 ## 
 ### # ####
 
-
+mutate()
 ### 2 ####
 ## 
 ## Neste dataset é possível identificar que alguns servidores estão lotados em órgãos diferentes do seu órgão de exercício.
