@@ -42,6 +42,8 @@ my_db <- MonetDBLite::src_monetdblite(dbdir)
 # Cria tabela temporária com ted_ratings
 tb_ted_ratings <- copy_to(my_db, df = ted_ratings, name = "ted_ratings_tmp", overwrite = TRUE, temporary = TRUE)
 
+
+summary(tb_ted_ratings)
 # Cria tabela temporária com ted_main
 tb_ted_main <- copy_to(my_db, df = ted_main, name = "ted_main_tmp", overwrite = TRUE, temporary = TRUE)
 
@@ -62,8 +64,8 @@ tb_ted_main %>%
 show_query( tb_ted_main )
 
 # Grava ted_main com novas colunas
-tb_ted_main    <- copy_to( my_db, tb_ted_main, name = "ted_main", overwrite = TRUE, temporary = FALSE )
-tb_ted_ratings <- copy_to( my_db, tb_ted_ratings, name = "ted_ratings", overwrite = TRUE, temporary = FALSE )
+tb_ted_main    <- copy_to( my_db, tb_ted_main, name = "ted_main_AULA", overwrite = TRUE, temporary = FALSE )
+tb_ted_ratings <- copy_to( my_db, tb_ted_ratings, name = "ted_ratings_AULA", overwrite = TRUE, temporary = FALSE )
 
 # Encerra conexão
 MonetDBLite::monetdblite_shutdown()

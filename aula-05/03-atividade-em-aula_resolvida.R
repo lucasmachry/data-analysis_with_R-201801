@@ -55,8 +55,9 @@ ted_talks %>%
   mutate(ano = year(film_date)) %>%
   count(ano) -> apresentacoes_por_ano
 
-quantile(apresentacoes_por_ano$n, probs = seq(from=0, to=1, by=.1))
+q10 <- quantile(apresentacoes_por_ano$n, probs = seq(from=0, to=1, by=.1))
 
+filter( apresentacoes_por_ano, n< q10[5]) %>% select( ano ) %$% max(ano)
 ted_talks %<>% 
   filter(year(film_date) >= 2005)
 
