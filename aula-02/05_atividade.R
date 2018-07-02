@@ -11,12 +11,13 @@ load("aula-02/data/dados_exercicio.RData")
 ## Dica 2: Na primeira aula vimos uma função do RStudio que permite visualizar o conteúdo de uma variável, mas neste caso 
 ##         quero ver uma saída na Console.
 ### # ####
-
+acessos_alunos
+str(acessos_alunos)
 
 
 ### 2 ###
 ## Quantos elementos a variável acessos_alunos possui? Utilize uma função do R que retorna o tamanho da variável.
-
+length(acessos_alunos)
 ## Dica: Vimos um exemplo no mesmo material sobre estruturas de dados
 ### # ###
 
@@ -30,7 +31,7 @@ load("aula-02/data/dados_exercicio.RData")
 ## Dica 1: Utilize a função paste() para composição do texto que será impresso. 
 ## Dica 2: Vimos exemplos disto nos materiais dos tipos numéricos e das estruturas de dados.
 ### # ###
-
+print(paste("O aluno alu201830290 realizou ",acessos_alunos$alu201830290," acessos"))
 
 
 ### 4 ###
@@ -43,22 +44,24 @@ acessos <- unlist(acessos_alunos)
 ## 2. Com uma operação de indexação, crie um outro vetor contendo somente os valores maiores
 ## 3. Determine o tamanho do vetor da operação 2, imprimindo o resultado na Console
 ### # ###
-
-
+acesso_compare = acessos > acessos_alunos$alu201830290 ##compara quais alunos tiveram mais acessos
+alunos_mor <- acessos[acesso_compare] ##recebe apenas os valores Verdadeiros
+print(length(alunos_mor))
 
 ### 5 ###
 ## Combine todas as etapas acima em uma única chamada, sem a criação dos vetores auxiliares
 ### # ###
 
-
+print(length(acessos[acessos>acessos_alunos$alu201830290]))
 
 ### 6 ###
 ## Agora determine quantos colegas fizeram menos acessos que você. 
 ## Faça isso utilizando a função sum!
+sum(acessos <= acessos_alunos$alu201830290) 
+## O valor logico é convertido para 0 ou 1, e faz a soma
 
 ## Dica: Lembre que falamos sobre como o R faz conversões implícitas entre o tipo lógico e tipos numéricos
 ### # ###
-
 
 
 ### 7 ###
@@ -71,7 +74,9 @@ acessos <- unlist(acessos_alunos)
 ## Dica: Pode ser mais fácil se iniciar o vetor notas como uma cópia do vetor acessos, modificando os valores conforme as regras
 ## OBSERVAÇÃO :: Não avaliarei participação na forma do enunciado deste exercício. 
 ### # ###
-
+notas <- acessos
+notas[notas >0 & notas< 10] <- 1
+notas[notas >=10] <- 2
 
 
 ### 8 ###
@@ -89,20 +94,22 @@ acessos_alunos_e_guest$guest <- NA
 
 ## Repita as atividades 4, 5, 6, e 7 utilizando o acessos_com_guest no lugar da lista acessos_alunos.
 ## Tome o devido cuidado de sempre criar variáveis com nomes diferentes das já utilizadas! 
-
-
-
+acessos_g <- unlist(acessos_alunos_e_guest) ##EXERCICIO 4
+guest_comp <- acessos > acessos_alunos_e_guest$alu201830290
+alunosg_mor <- acessos_g[guest_comp] ##recebe apenas os valores Verdadeiros
+print(length(alunosg_mor))
+sum(acessos_g <= acessos_alunos_e_guest$alu201830290) ##EXERCICIO 6
 ### 10 ###
 ## Responda as seguintes perguntas:
 
 
 # 1. Houve modificação no número de alunos com mais e com menos acessos que você?
-
+## Não. Pois o tipo NA não é comparável com Inteiro
 # 2. Como você conclui que o R trata comparações (operações relacionais) entre valores numéricos e NA?
-
+## IGnora no valor NA
 # 3. Qual o resultado do uso da função sum na presença de NA? O que você conclui sobre a operação de soma de todos os valores de
 #    um vetor na presença de NA?
-
+## ELE NAO É EXECUTADO, POIS O TIPO NÃO É CONVERSÍVE PARA INTEIRO
 # 4. Execute o comando abaixo para ler a documentação da função sum e veja se há como modificar a chamada da função sum na presença
 #    de NAs. Teste os exemplos da página de help da função sum.
 help(sum)

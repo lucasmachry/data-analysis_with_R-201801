@@ -130,4 +130,3 @@ Divisão por Zero é a causa mais comum para valores como estes. Em R, `Inf` é 
 
 
 
-
