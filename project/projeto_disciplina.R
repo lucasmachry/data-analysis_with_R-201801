@@ -210,7 +210,7 @@ media_top3bananas %>%
     theme_bw()
 #22 # Teste se há diferença nas vendas por hora entre os dias 3 e 4 usando o teste de wilcoxon e utilizando a simulação da aula de testes
 
-wilcox.test( media_bananas ~ order_hour_of_day,
+wilcox.test( media_bananas ~ order_dow,
              data = media_top3bananas,
              alternative = "two.sided",
              subset = order_dow %in% c(3,4),
