@@ -174,7 +174,7 @@ ted_data %>%
 #' 
 ## ------------------------------------------------------------------------
 ### INSTALAR ESTA PACKAGE ###
-#install.packages("irlba")   # Package de melhor desempenho para tarefas de componentes principais
+install.packages("irlba")   # Package de melhor desempenho para tarefas de componentes principais
 
 tags_pca <- irlba::prcomp_irlba(tags_scaled, n = 16)
 

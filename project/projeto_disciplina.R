@@ -85,44 +85,133 @@ paste("OS 15 produtos seguem o mesmo padrão de média, aumentando a partir das 
 #10 # Calcule as seguintes estatísticas descritivas sobre a quantidade de pedidos por dia, para cada hora do dia. O resultado final deve ser exibido para cada hora do dia:
     # Média, Desvio Padrão, Mediana, Mínimo e Máximo
     # Considerando os valores calculados, você acredita que a distribuição por hora é gaussiana? 
+dataframe_full %>% 
+    count(order_dow, order_hour_of_day) %>%
+    group_by(order_hour_of_day) %>%
+    summarise(media = mean(n), desvio_padrao = sd(n), mediana = median(n), minimo = min(n), maximo = max(n))  %>%
+    ungroup() -> products_by_hour
 
+products_by_hour %>% View()
 
+print("Sim, pelo valores é possivel inferir que a distribuição é gaussiana, devido o maximo ser bem superior a média, e ")
 #11 # Faça um gráfico da média de quantidade de produtos por hora, com 1 desvio padrão para cima e para baixo em forma de gráfico de banda
+products_by_hour %>%
+    ggplot(aes(x = order_hour_of_day, y = media, group = "order_hour_of_day", ymin = media - desvio_padrao, ymax = media + desvio_padrao)) +
+    geom_ribbon(fill = "blue", alpha = 0.8) +
+    geom_line(color = "red") +
+    ggtitle("Média de Quantidade de Produtos por Hora") +
+    xlab("Horas") +
+    ylab("Média")
 
 
 #12 # Visualize um boxplot da quantidade de pedidos por hora nos 7 dias da semana. O resultado deve ter order_dow como eixo x.
-
+dataframe_full %>%
+    distinct(order_id,order_dow,order_hour_of_day) %>%
+    count(order_dow, order_hour_of_day) %>%
+    ggplot(aes(x = order_dow, y = n , group = order_dow)) +
+    geom_boxplot() + 
+    scale_x_continuous( breaks = 0:6 ) +
+    scale_y_continuous( breaks = seq(from = 0, to = 2300, by = 100 )) +
+    labs( x = "Dias da Semana"
+          , y = "Quantidade de Pedidos por Hora"
+          , title = "Boxplot da Quantidade de Pedidos por Hora") +
+    theme_bw()
 
 #13 # Identifique, por usuário, o tempo médio entre pedidos
 
+tempo_medio <- dataframe_full %>% 
+    distinct(order_id, user_id,days_since_prior_order) %>%
+    group_by(user_id) %>%
+    summarise(media_tempo = mean(days_since_prior_order))
 
 #14 # Faça um gráfico de barras com a quantidade de usuários em cada tempo médio calculado
 
+tempo_medio %>%
+    ggplot(aes(x=media_tempo))+
+    geom_bar(fill="green", color = "blue", alpha=0.75)+
+    scale_x_continuous(breaks = seq(from=0, to=30, by=1))+
+    ggtitle("Quantidade de Usuários por Tempo Medio")+
+    xlab("Tempo Médio (em dias)")+
+    ylab("Quantidade de usuários")
 
 #15 # Faça um gráfico de barras com a quantidade de usuários em cada número de dias desde o pedido anterior. Há alguma similaridade entre os gráficos das atividades 14 e 15? 
+dataframe_full %>%
+    distinct(user_id, days_since_prior_order) %>%
+    ggplot(aes(x = days_since_prior_order)) +
+    geom_bar(fill="blue", color="red", alpha=0.7)+
+    scale_x_continuous(breaks = seq(from=0, to=30, by=1))+
+    scale_y_continuous(breaks = seq(from=0, to=40000, by=4000))+
+    xlab("Tempo (em dias)")+
+    ylab("Quantidade de usuários")
 
-
+print("Os graficos possuem os mesmo valores.")
 #16 # Repita o gráfico da atividade 14 mantendo somente os usuários com no mínimo 5 pedidos. O padrão se mantém?
+tempo_medio <- dataframe_full %>% 
+    distinct(order_id, user_id,days_since_prior_order) %>%
+    count(user_id) %>%
+    group_by(user_id) %>%
+    filter(n()>5) %>%
+    summarise(media_tempo = mean(days_since_prior_order))
+tempo_medio %>% 
+    ggplot(aes(x=media_tempo))+
+    geom_bar(fill="green", color = "blue", alpha=0.75)+
+    scale_x_continuous(breaks = seq(from=0, to=30, by=1))+
+    ggtitle("Quantidade de Usuários por Tempo Medio")+
+    xlab("Tempo Médio (em dias)")+
+    ylab("Quantidade de usuários")
 
-
+print("Não Há usuários com 5 ou mais pedidos")
 #17 # O vetor abaixo lista todos os IDs de bananas maduras em seu estado natural.
     # Utilizando este vetor, identifique se existem pedidos com mais de um tipo de banana no mesmo pedido.
+bananas <- c(24852, 13176, 39276, 37067, 29259)
 
+orders_many_bananas <- dataframe_full %>%
+    filter(product_id %in% bananas) %>%
+    count(order_id) %>%
+    filter(n>1) %>%
+    select(order_id)
 
 #18 # Se existirem, pedidos resultantes da atividade 17, conte quantas vezes cada tipo de banana aparece nestes pedidos com mais de um tipo de banana.
     # Após exibir os tipos de banana, crie um novo vetor de id de bananas contendo somente os 3 produtos de maior contagem de ocorrências
 
+top3bananas <- dataframe_full %>%
+    filter(order_id %in% orders_many_bananas$order_id) %>%
+    filter(product_id %in% bananas) %>%
+    group_by(product_id) %>%
+    count(product_id) %>%
+    arrange(desc(n)) %>%
+    head(3) %>%
+    select(product_id)
+    
 
 #19 # Com base no vetor criado na atividade 18, conte quantos pedidos de, em média, são feitos por hora em cada dia da semana. 
-
+media_top3bananas <- dataframe_full %>%
+    filter(product_id %in% top3bananas$product_id) %>%
+    group_by(order_dow, order_hour_of_day) %>%
+    summarise(media_bananas = mean(n()))
 
 #20 # Faça um gráfico dos pedidos de banana da atividade 19. O gráfico deve ter o dia da semana no eixo X, a hora do dia no eixo Y, 
     # e pontos na intersecção dos eixos, onde o tamanho do ponto é determinado pela quantidade média de pedidos de banana 
     # nesta combinação de dia da semana com hora
 
-
+media_top3bananas %>%
+    ggplot(aes(x=order_dow, y=order_hour_of_day, size=media_bananas))+
+    geom_point(color="gold")+
+    scale_x_continuous(breaks = 0:6)+
+    ggtitle("Medida de Venda de Bananas por dia e Hora")+
+    xlab("Dias da Semana")+
+    ylab("Hora do Dia")
 #21 # Faça um histograma da quantidade média calculada na atividade 19, facetado por dia da semana
 
-
+media_top3bananas %>%
+    ggplot(aes(x=media_bananas))+
+    geom_histogram(bins = 200)+
+    facet_wrap(~ order_dow, ncol = 3) +
+    theme_bw()
 #22 # Teste se há diferença nas vendas por hora entre os dias 3 e 4 usando o teste de wilcoxon e utilizando a simulação da aula de testes
 
+wilcox.test( media_bananas ~ order_dow,
+             data = media_top3bananas,
+             alternative = "two.sided",
+             subset = order_dow %in% c(3,4),
+             conf.int=TRUE)
